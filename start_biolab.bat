@@ -9,7 +9,7 @@ set SCRIPT_DIR=%~dp0
 cd /d "%SCRIPT_DIR%"
 
 echo [1/2] Iniciando Backend Django...
-start "Django Backend" cmd /k "cd backend && env\Scripts\activate && python manage.py runserver"
+start "Django Backend" cmd /k "env\Scripts\activate && cd backend && python manage.py runserver"
 
 timeout /t 3 /nobreak >nul
 
