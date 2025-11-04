@@ -15,6 +15,54 @@ USE clinical_data;
 -- DELETE FROM laboratorista;
 -- DELETE FROM paciente;
 
+-- TABLA paciente
+CREATE TABLE paciente (
+    paciente_id VARCHAR(10) NOT NULL,          -- p.ej. 'P001'
+    codigo_ingreso VARCHAR(50) NOT NULL UNIQUE,
+    nombre VARCHAR(100) NOT NULL,
+    apellidos VARCHAR(150) NOT NULL,
+    direccion VARCHAR(255),
+    telefono VARCHAR(30),
+    insurance VARCHAR(100),
+    fecha_registro DATE,
+    PRIMARY KEY (paciente_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- TABLA laboratorista
+CREATE TABLE laboratorista (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,   -- id numérico para FK en resultados
+    codigo_interno VARCHAR(20) NOT NULL,       -- p.ej. 'LAB001'
+    nombre VARCHAR(150) NOT NULL,
+    titulo VARCHAR(80),
+    telefono VARCHAR(30),
+    email VARCHAR(150),
+    especialidad VARCHAR(120),
+    PRIMARY KEY (id),
+    UNIQUE KEY ux_laboratorista_codigo (codigo_interno),
+    UNIQUE KEY ux_laboratorista_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- TABLA resultado_perfil_lipidico
+CREATE TABLE resultado_perfil_lipidico (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    paciente_id VARCHAR(10) NOT NULL,
+    laboratorista_id INT UNSIGNED NOT NULL,
+    colesterol_total DECIMAL(6,2),   -- ej: 225.00
+    colesterol_hdl DECIMAL(6,2),
+    colesterol_ldl DECIMAL(6,2),
+    trigliceridos DECIMAL(6,2),
+    fecha_analisis DATE,
+    observaciones TEXT,
+    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_rpl_paciente (paciente_id),
+    KEY idx_rpl_laboratorista (laboratorista_id),
+    CONSTRAINT fk_rpl_paciente FOREIGN KEY (paciente_id)
+        REFERENCES paciente (paciente_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_rpl_laboratorista FOREIGN KEY (laboratorista_id)
+        REFERENCES laboratorista (id) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Insertar pacientes de ejemplo
 INSERT INTO paciente (paciente_id, codigo_ingreso, nombre, apellidos, direccion, telefono, insurance, fecha_registro) VALUES
 ('P001', 'ING-00156', 'María', 'García López', 'Calle 10 #45-67, Medellín', '3001234567', 'Sura EPS', '2024-10-15'),
